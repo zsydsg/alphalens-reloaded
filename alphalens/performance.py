@@ -245,7 +245,7 @@ def factor_returns(factor_data,
 
     weighted_returns = \
         factor_data[utils.get_forward_returns_columns(factor_data.columns)] \
-        .multiply(weights, axis=0)
+            .multiply(weights, axis=0)
 
     if by_asset:
         returns = weighted_returns
@@ -507,12 +507,12 @@ def mean_return_by_quantile(factor_data,
         grouper = [mean_ret.index.get_level_values('factor_quantile')]
         if by_group:
             grouper.append(mean_ret.index.get_level_values('group'))
-        group_stats = mean_ret.groupby(grouper)\
+        group_stats = mean_ret.groupby(grouper) \
             .agg(['mean', 'std', 'count'])
         mean_ret = group_stats.T.xs('mean', level=1).T
 
     std_error_ret = group_stats.T.xs('std', level=1).T \
-        / np.sqrt(group_stats.T.xs('count', level=1).T)
+                    / np.sqrt(group_stats.T.xs('count', level=1).T)
 
     return mean_ret, std_error_ret
 
@@ -553,14 +553,14 @@ def compute_mean_returns_spread(mean_returns,
 
     mean_return_difference = mean_returns.xs(upper_quant,
                                              level='factor_quantile') \
-        - mean_returns.xs(lower_quant, level='factor_quantile')
+                             - mean_returns.xs(lower_quant, level='factor_quantile')
 
     if std_err is None:
         joint_std_err = None
     else:
         std1 = std_err.xs(upper_quant, level='factor_quantile')
         std2 = std_err.xs(lower_quant, level='factor_quantile')
-        joint_std_err = np.sqrt(std1**2 + std2**2)
+        joint_std_err = np.sqrt(std1 ** 2 + std2 ** 2)
 
     return mean_return_difference, joint_std_err
 
@@ -585,16 +585,23 @@ def quantile_turnover(quantile_factor, quantile, period=1):
         Period by period turnover for that quantile.
     """
 
-    quant_names = quantile_factor[quantile_factor == quantile]
-    quant_name_sets = quant_names.groupby(level=['date']).apply(
-        lambda x: set(x.index.get_level_values('asset')))
+    # keep DateTimeIndex frequency information
+    date_idx = quantile_factor.index.names.index('date')
+    freq = quantile_factor.index.levels[date_idx].freq
 
-    name_shifted = quant_name_sets.shift(period)
+    quant_names = quantile_factor[quantile_factor == quantile]
+    quant_name_sets = (quant_names
+                       .groupby(level=['date'])
+                       .apply(lambda x: set(x.index
+                                            .get_level_values('asset')))
+                       .asfreq(freq))
+
+    name_shifted = quant_name_sets.shift(periods=period,
+                                         freq=freq)
 
     new_names = (quant_name_sets - name_shifted).dropna()
-    quant_turnover = new_names.apply(
-        lambda x: len(x)) / quant_name_sets.apply(lambda x: len(x))
-    quant_turnover.name = quantile
+    quant_turnover = (new_names.apply(lambda x: len(x)) /
+                      quant_name_sets.apply(lambda x: len(x))).rename(quantile)
     return quant_turnover
 
 
