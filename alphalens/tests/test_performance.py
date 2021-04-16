@@ -756,16 +756,17 @@ class PerformanceTestCase(TestCase):
                                          expected_vals):
 
         dr = date_range(start='2015-1-1', periods=len(factor_values),
-                        freq=freq)
-        dr.name = 'date'
-        tickers = ['A', 'B', 'C', 'D']
-        factor = DataFrame(index=dr,
-                           columns=tickers,
-                           data=factor_values).stack()
-        factor.index = factor.index.set_names(['date', 'asset'])
+                        freq=freq, name='date')
 
-        factor_df = DataFrame()
-        factor_df['factor'] = factor
+        tickers = ['A', 'B', 'C', 'D']
+        factor = (DataFrame(index=dr,
+                            columns=tickers,
+                            data=factor_values)
+                  .rename_axis('asset', axis=1)
+                  .stack())
+
+        factor_df = DataFrame(data=factor,
+                              columns=['factor'])
 
         fa = factor_rank_autocorrelation(factor_df, period)
         expected = Series(index=dr, data=expected_vals)

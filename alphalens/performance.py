@@ -631,19 +631,29 @@ def factor_rank_autocorrelation(factor_data, period=1):
         Rolling 1 period (defined by time_rule) autocorrelation of
         factor values.
     """
-    grouper = [factor_data.index.get_level_values('date')]
+    # grouper = [factor_data.index.get_level_values('date')]
 
-    ranks = factor_data.groupby(grouper)['factor'].rank()
+    date_idx = factor_data.index.names.index('date')
+    freq = factor_data.index.levels[date_idx].freq
 
-    asset_factor_rank = ranks.reset_index().pivot(index='date',
-                                                  columns='asset',
-                                                  values='factor')
+    asset_ranks_by_day = (factor_data.
+                          groupby(level='date')
+                          ['factor']
+                          .rank()
+                          .reset_index()
+                          .pivot(index='date',
+                                 columns='asset',
+                                 values='factor')
+                          .asfreq(freq))
 
-    asset_shifted = asset_factor_rank.shift(period)
+    # asset_factor_rank = ranks
 
-    autocorr = asset_factor_rank.corrwith(asset_shifted, axis=1)
-    autocorr.name = period
-    return autocorr
+    asset_shifted = asset_ranks_by_day.shift(period)
+
+    return (asset_ranks_by_day
+            .corrwith(asset_shifted, axis=1)
+            .rename(period)
+            .asfreq(freq))
 
 
 def common_start_returns(factor,
