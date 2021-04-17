@@ -430,7 +430,8 @@ def create_turnover_tear_sheet(factor_data, turnover_periods=None):
 
     if turnover_periods is None:
         input_periods = utils.get_forward_returns_columns(
-            factor_data.columns, require_exact_day_multiple=True,
+            factor_data.columns,
+            require_exact_day_multiple=True,
         ).to_numpy()
         turnover_periods = utils.timedelta_strings_to_integers(input_periods)
     else:
@@ -486,10 +487,9 @@ def create_turnover_tear_sheet(factor_data, turnover_periods=None):
 
 
 @plotting.customize
-def create_full_tear_sheet(factor_data,
-                           long_short=True,
-                           group_neutral=False,
-                           by_group=False):
+def create_full_tear_sheet(
+    factor_data, long_short=True, group_neutral=False, by_group=False
+):
     """
     Creates a full tear sheet for analysis and evaluating single
     return predicting (alpha) factor.
@@ -527,13 +527,15 @@ def create_full_tear_sheet(factor_data,
 
 
 @plotting.customize
-def create_event_returns_tear_sheet(factor_data,
-                                    returns,
-                                    avgretplot=(5, 15),
-                                    long_short=True,
-                                    group_neutral=False,
-                                    std_bar=True,
-                                    by_group=False):
+def create_event_returns_tear_sheet(
+    factor_data,
+    returns,
+    avgretplot=(5, 15),
+    long_short=True,
+    group_neutral=False,
+    std_bar=True,
+    by_group=False,
+):
     """
     Creates a tear sheet to view the average cumulative returns for a
     factor within a window (pre and post event).
@@ -633,11 +635,9 @@ def create_event_returns_tear_sheet(factor_data,
 
 
 @plotting.customize
-def create_event_study_tear_sheet(factor_data,
-                                  returns,
-                                  avgretplot=(5, 15),
-                                  rate_of_ret=True,
-                                  n_bars=50):
+def create_event_study_tear_sheet(
+    factor_data, returns, avgretplot=(5, 15), rate_of_ret=True, n_bars=50
+):
     """
     Creates an event study tear sheet for analysis of a specific event.
 

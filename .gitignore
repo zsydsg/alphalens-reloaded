@@ -22,3 +22,7 @@ dist
 
 # Emacs temp files.
 *~
+
+.idea
+.noseids
+update

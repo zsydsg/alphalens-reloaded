@@ -75,19 +75,22 @@ def non_unique_bin_edges_error(func):
         try:
             return func(*args, **kwargs)
         except ValueError as e:
-            if 'Bin edges must be unique' in str(e):
+            if "Bin edges must be unique" in str(e):
                 rethrow(e, message)
             raise
+
     return dec
 
 
 @non_unique_bin_edges_error
-def quantize_factor(factor_data,
-                    quantiles=5,
-                    bins=None,
-                    by_group=False,
-                    no_raise=False,
-                    zero_aware=False):
+def quantize_factor(
+    factor_data,
+    quantiles=5,
+    bins=None,
+    by_group=False,
+    no_raise=False,
+    zero_aware=False,
+):
     """
     Computes period wise factor quantiles.
 
@@ -126,14 +129,19 @@ def quantize_factor(factor_data,
     factor_quantile : pd.Series
         Factor quantiles indexed by date and asset.
     """
-    if not ((quantiles is not None and bins is None) or
-            (quantiles is None and bins is not None)):
-        raise ValueError('Either quantiles or bins should be provided')
+    if not (
+        (quantiles is not None and bins is None)
+        or (quantiles is None and bins is not None)
+    ):
+        raise ValueError("Either quantiles or bins should be provided")
 
-    if zero_aware and not (isinstance(quantiles, int)
-                           or isinstance(bins, int)):
-        msg = ("zero_aware should only be True when quantiles or bins is an"
-               " integer")
+    if zero_aware and not (
+        isinstance(quantiles, int) or isinstance(bins, int)
+    ):
+        msg = (
+            "zero_aware should only be True when quantiles or bins is an"
+            " integer"
+        )
         raise ValueError(msg)
 
     def quantile_calc(x, _quantiles, _bins, _zero_aware, _no_raise):
@@ -141,31 +149,38 @@ def quantize_factor(factor_data,
             if _quantiles is not None and _bins is None and not _zero_aware:
                 return pd.qcut(x, _quantiles, labels=False) + 1
             elif _quantiles is not None and _bins is None and _zero_aware:
-                pos_quantiles = pd.qcut(x[x >= 0], _quantiles // 2,
-                                        labels=False) + _quantiles // 2 + 1
-                neg_quantiles = pd.qcut(x[x < 0], _quantiles // 2,
-                                        labels=False) + 1
+                pos_quantiles = (
+                    pd.qcut(x[x >= 0], _quantiles // 2, labels=False)
+                    + _quantiles // 2
+                    + 1
+                )
+                neg_quantiles = (
+                    pd.qcut(x[x < 0], _quantiles // 2, labels=False) + 1
+                )
                 return pd.concat([pos_quantiles, neg_quantiles]).sort_index()
             elif _bins is not None and _quantiles is None and not _zero_aware:
                 return pd.cut(x, _bins, labels=False) + 1
             elif _bins is not None and _quantiles is None and _zero_aware:
-                pos_bins = pd.cut(x[x >= 0], _bins // 2,
-                                  labels=False) + _bins // 2 + 1
-                neg_bins = pd.cut(x[x < 0], _bins // 2,
-                                  labels=False) + 1
+                pos_bins = (
+                    pd.cut(x[x >= 0], _bins // 2, labels=False)
+                    + _bins // 2
+                    + 1
+                )
+                neg_bins = pd.cut(x[x < 0], _bins // 2, labels=False) + 1
                 return pd.concat([pos_bins, neg_bins]).sort_index()
         except Exception as e:
             if _no_raise:
                 return pd.Series(index=x.index)
             raise e
 
-    grouper = [factor_data.index.get_level_values('date')]
+    grouper = [factor_data.index.get_level_values("date")]
     if by_group:
-        grouper.append('group')
+        grouper.append("group")
 
-    factor_quantile = factor_data.groupby(grouper)['factor'] \
-        .apply(quantile_calc, quantiles, bins, zero_aware, no_raise)
-    factor_quantile.name = 'factor_quantile'
+    factor_quantile = factor_data.groupby(grouper)["factor"].apply(
+        quantile_calc, quantiles, bins, zero_aware, no_raise
+    )
+    factor_quantile.name = "factor_quantile"
 
     return factor_quantile.dropna()
 
@@ -190,10 +205,10 @@ def infer_trading_calendar(factor_idx, prices_idx):
     traded_weekdays = []
     holidays = []
 
-    days_of_the_week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    days_of_the_week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     for day, day_str in enumerate(days_of_the_week):
 
-        weekday_mask = (full_idx.dayofweek == day)
+        weekday_mask = full_idx.dayofweek == day
 
         # drop days of the week that are not traded at all
         if not weekday_mask.any():
@@ -202,22 +217,26 @@ def infer_trading_calendar(factor_idx, prices_idx):
 
         # look for holidays
         used_weekdays = full_idx[weekday_mask].normalize()
-        all_weekdays = pd.date_range(full_idx.min(), full_idx.max(),
-                                     freq=CustomBusinessDay(weekmask=day_str)
-                                     ).normalize()
+        all_weekdays = pd.date_range(
+            full_idx.min(),
+            full_idx.max(),
+            freq=CustomBusinessDay(weekmask=day_str),
+        ).normalize()
         _holidays = all_weekdays.difference(used_weekdays)
         _holidays = [timestamp.date() for timestamp in _holidays]
         holidays.extend(_holidays)
 
-    traded_weekdays = ' '.join(traded_weekdays)
+    traded_weekdays = " ".join(traded_weekdays)
     return CustomBusinessDay(weekmask=traded_weekdays, holidays=holidays)
 
 
-def compute_forward_returns(factor,
-                            prices,
-                            periods=(1, 5, 10),
-                            filter_zscore=None,
-                            cumulative_returns=True):
+def compute_forward_returns(
+    factor,
+    prices,
+    periods=(1, 5, 10),
+    filter_zscore=None,
+    cumulative_returns=True,
+):
     """
     Finds the N period forward returns (as percent change) for each asset
     provided.
@@ -261,19 +280,23 @@ def compute_forward_returns(factor,
 
     factor_dateindex = factor.index.levels[0]
     if factor_dateindex.tz != prices.index.tz:
-        raise NonMatchingTimezoneError("The timezone of 'factor' is not the "
-                                       "same as the timezone of 'prices'. See "
-                                       "the pandas methods tz_localize and "
-                                       "tz_convert.")
+        raise NonMatchingTimezoneError(
+            "The timezone of 'factor' is not the "
+            "same as the timezone of 'prices'. See "
+            "the pandas methods tz_localize and "
+            "tz_convert."
+        )
 
     freq = infer_trading_calendar(factor_dateindex, prices.index)
 
     factor_dateindex = factor_dateindex.intersection(prices.index)
 
     if len(factor_dateindex) == 0:
-        raise ValueError("Factor and prices indices don't match: make sure "
-                         "they have the same convention in terms of datetimes "
-                         "and symbol-names")
+        raise ValueError(
+            "Factor and prices indices don't match: make sure "
+            "they have the same convention in terms of datetimes "
+            "and symbol-names"
+        )
 
     # chop prices down to only the assets we care about (= unique assets in
     # `factor`).  we could modify `prices` in place, but that might confuse
@@ -289,13 +312,12 @@ def compute_forward_returns(factor,
         else:
             returns = prices.pct_change()
 
-        forward_returns = \
-            returns.shift(-period).reindex(factor_dateindex)
+        forward_returns = returns.shift(-period).reindex(factor_dateindex)
 
         if filter_zscore is not None:
-            mask = abs(
-                forward_returns - forward_returns.mean()
-            ) > (filter_zscore * forward_returns.std())
+            mask = abs(forward_returns - forward_returns.mean()) > (
+                filter_zscore * forward_returns.std()
+            )
             forward_returns[mask] = np.nan
 
         #
@@ -308,8 +330,11 @@ def compute_forward_returns(factor,
             if i >= len(forward_returns.index):
                 break
             p_idx = prices.index.get_loc(forward_returns.index[i])
-            if p_idx is None or p_idx < 0 or (
-                    p_idx + period) >= len(prices.index):
+            if (
+                p_idx is None
+                or p_idx < 0
+                or (p_idx + period) >= len(prices.index)
+            ):
                 continue
             start = prices.index[p_idx]
             end = prices.index[p_idx + period]
@@ -327,18 +352,16 @@ def compute_forward_returns(factor,
     df = pd.DataFrame.from_dict(raw_values_dict)
     df.set_index(
         pd.MultiIndex.from_product(
-            [factor_dateindex, prices.columns],
-            names=['date', 'asset']
+            [factor_dateindex, prices.columns], names=["date", "asset"]
         ),
-        inplace=True
+        inplace=True,
     )
     df = df.reindex(factor.index)
 
     # now set the columns correctly
     df = df[column_list]
-
     df.index.levels[0].freq = freq
-    df.index.set_names(['date', 'asset'], inplace=True)
+    df.index.set_names(["date", "asset"], inplace=True)
 
     return df
 
@@ -368,7 +391,7 @@ def backshift_returns_series(series, N):
 
     new_index = pd.MultiIndex(
         levels=[new_dates, sids],
-        labels=[new_date_labels, new_sid_labels],
+        codes=[new_date_labels, new_sid_labels],
         sortorder=1,
         names=ix.names,
     )
@@ -407,11 +430,12 @@ def demean_forward_returns(factor_data, grouper=None):
     factor_data = factor_data.copy()
 
     if not grouper:
-        grouper = factor_data.index.get_level_values('date')
+        grouper = factor_data.index.get_level_values("date")
 
     cols = get_forward_returns_columns(factor_data.columns)
-    factor_data[cols] = factor_data.groupby(grouper)[cols] \
-        .transform(lambda x: x - x.mean())
+    factor_data[cols] = factor_data.groupby(grouper)[cols].transform(
+        lambda x: x - x.mean()
+    )
 
     return factor_data
 
@@ -440,25 +464,27 @@ def print_table(table, name=None, fmt=None):
     if isinstance(table, pd.DataFrame):
         table.columns.name = name
 
-    prev_option = pd.get_option('display.float_format')
+    prev_option = pd.get_option("display.float_format")
     if fmt is not None:
-        pd.set_option('display.float_format', lambda x: fmt.format(x))
+        pd.set_option("display.float_format", lambda x: fmt.format(x))
 
     display(table)
 
     if fmt is not None:
-        pd.set_option('display.float_format', prev_option)
+        pd.set_option("display.float_format", prev_option)
 
 
-def get_clean_factor(factor,
-                     forward_returns,
-                     groupby=None,
-                     binning_by_group=False,
-                     quantiles=5,
-                     bins=None,
-                     groupby_labels=None,
-                     max_loss=0.35,
-                     zero_aware=False):
+def get_clean_factor(
+    factor,
+    forward_returns,
+    groupby=None,
+    binning_by_group=False,
+    quantiles=5,
+    bins=None,
+    groupby_labels=None,
+    max_loss=0.35,
+    zero_aware=False,
+):
     """
     Formats the factor data, forward return data, and group mappings into a
     DataFrame that contains aligned MultiIndex indices of timestamp and asset.
@@ -591,38 +617,41 @@ def get_clean_factor(factor,
     initial_amount = float(len(factor.index))
 
     factor_copy = factor.copy()
-    factor_copy.index = factor_copy.index.rename(['date', 'asset'])
+    factor_copy.index = factor_copy.index.rename(["date", "asset"])
     factor_copy = factor_copy[np.isfinite(factor_copy)]
 
     merged_data = forward_returns.copy()
-    merged_data['factor'] = factor_copy
+    merged_data["factor"] = factor_copy
 
     if groupby is not None:
         if isinstance(groupby, dict):
-            diff = set(factor_copy.index.get_level_values(
-                'asset')) - set(groupby.keys())
+            diff = set(factor_copy.index.get_level_values("asset")) - set(
+                groupby.keys()
+            )
             if len(diff) > 0:
                 raise KeyError(
-                    "Assets {} not in group mapping".format(
-                        list(diff)))
+                    "Assets {} not in group mapping".format(list(diff))
+                )
 
             ss = pd.Series(groupby)
-            groupby = pd.Series(index=factor_copy.index,
-                                data=ss[factor_copy.index.get_level_values(
-                                    'asset')].values)
+            groupby = pd.Series(
+                index=factor_copy.index,
+                data=ss[factor_copy.index.get_level_values("asset")].values,
+            )
 
         if groupby_labels is not None:
             diff = set(groupby.values) - set(groupby_labels.keys())
             if len(diff) > 0:
                 raise KeyError(
-                    "groups {} not in passed group names".format(
-                        list(diff)))
+                    "groups {} not in passed group names".format(list(diff))
+                )
 
             sn = pd.Series(groupby_labels)
-            groupby = pd.Series(index=groupby.index,
-                                data=sn[groupby.values].values)
+            groupby = pd.Series(
+                index=groupby.index, data=sn[groupby.values].values
+            )
 
-        merged_data['group'] = groupby.astype('category')
+        merged_data["group"] = groupby.astype("category")
 
     merged_data = merged_data.dropna()
 
@@ -630,15 +659,10 @@ def get_clean_factor(factor,
 
     no_raise = False if max_loss == 0 else True
     quantile_data = quantize_factor(
-        merged_data,
-        quantiles,
-        bins,
-        binning_by_group,
-        no_raise,
-        zero_aware
+        merged_data, quantiles, bins, binning_by_group, no_raise, zero_aware
     )
 
-    merged_data['factor_quantile'] = quantile_data
+    merged_data["factor_quantile"] = quantile_data
 
     merged_data = merged_data.dropna()
 
@@ -648,14 +672,18 @@ def get_clean_factor(factor,
     fwdret_loss = (initial_amount - fwdret_amount) / initial_amount
     bin_loss = tot_loss - fwdret_loss
 
-    print("Dropped %.1f%% entries from factor data: %.1f%% in forward "
-          "returns computation and %.1f%% in binning phase "
-          "(set max_loss=0 to see potentially suppressed Exceptions)." %
-          (tot_loss * 100, fwdret_loss * 100, bin_loss * 100))
+    print(
+        "Dropped %.1f%% entries from factor data: %.1f%% in forward "
+        "returns computation and %.1f%% in binning phase "
+        "(set max_loss=0 to see potentially suppressed Exceptions)."
+        % (tot_loss * 100, fwdret_loss * 100, bin_loss * 100)
+    )
 
     if tot_loss > max_loss:
-        message = ("max_loss (%.1f%%) exceeded %.1f%%, consider increasing it."
-                   % (max_loss * 100, tot_loss * 100))
+        message = (
+            "max_loss (%.1f%%) exceeded %.1f%%, consider increasing it."
+            % (max_loss * 100, tot_loss * 100)
+        )
         raise MaxLossExceededError(message)
     else:
         print("max_loss is %.1f%%, not exceeded: OK!" % (max_loss * 100))
@@ -663,18 +691,20 @@ def get_clean_factor(factor,
     return merged_data
 
 
-def get_clean_factor_and_forward_returns(factor,
-                                         prices,
-                                         groupby=None,
-                                         binning_by_group=False,
-                                         quantiles=5,
-                                         bins=None,
-                                         periods=(1, 5, 10),
-                                         filter_zscore=20,
-                                         groupby_labels=None,
-                                         max_loss=0.35,
-                                         zero_aware=False,
-                                         cumulative_returns=True):
+def get_clean_factor_and_forward_returns(
+    factor,
+    prices,
+    groupby=None,
+    binning_by_group=False,
+    quantiles=5,
+    bins=None,
+    periods=(1, 5, 10),
+    filter_zscore=20,
+    groupby_labels=None,
+    max_loss=0.35,
+    zero_aware=False,
+    cumulative_returns=True,
+):
     """
     Formats the factor data, pricing data, and group mappings into a DataFrame
     that contains aligned MultiIndex indices of timestamp and asset. The
@@ -832,11 +862,17 @@ def get_clean_factor_and_forward_returns(factor,
         cumulative_returns,
     )
 
-    factor_data = get_clean_factor(factor, forward_returns, groupby=groupby,
-                                   groupby_labels=groupby_labels,
-                                   quantiles=quantiles, bins=bins,
-                                   binning_by_group=binning_by_group,
-                                   max_loss=max_loss, zero_aware=zero_aware)
+    factor_data = get_clean_factor(
+        factor,
+        forward_returns,
+        groupby=groupby,
+        groupby_labels=groupby_labels,
+        quantiles=quantiles,
+        bins=bins,
+        binning_by_group=binning_by_group,
+        max_loss=max_loss,
+        zero_aware=zero_aware,
+    )
 
     return factor_data
 
@@ -864,8 +900,7 @@ def rate_of_return(period_ret, base_period):
         returns values.
     """
     period_len = period_ret.name
-    conversion_factor = (pd.Timedelta(base_period) /
-                         pd.Timedelta(period_len))
+    conversion_factor = pd.Timedelta(base_period) / pd.Timedelta(period_len)
     return period_ret.add(1).pow(conversion_factor).sub(1)
 
 
@@ -890,8 +925,7 @@ def std_conversion(period_std, base_period):
         standard deviation/error values.
     """
     period_len = period_std.name
-    conversion_factor = (pd.Timedelta(period_len) /
-                         pd.Timedelta(base_period))
+    conversion_factor = pd.Timedelta(period_len) / pd.Timedelta(base_period)
     return period_std / np.sqrt(conversion_factor)
 
 
@@ -933,21 +967,21 @@ def timedelta_to_string(timedelta):
         string representation of 'timedelta'
     """
     c = timedelta.components
-    format = ''
+    format = ""
     if c.days != 0:
-        format += '%dD' % c.days
+        format += "%dD" % c.days
     if c.hours > 0:
-        format += '%dh' % c.hours
+        format += "%dh" % c.hours
     if c.minutes > 0:
-        format += '%dm' % c.minutes
+        format += "%dm" % c.minutes
     if c.seconds > 0:
-        format += '%ds' % c.seconds
+        format += "%ds" % c.seconds
     if c.milliseconds > 0:
-        format += '%dms' % c.milliseconds
+        format += "%dms" % c.milliseconds
     if c.microseconds > 0:
-        format += '%dus' % c.microseconds
+        format += "%dus" % c.microseconds
     if c.nanoseconds > 0:
-        format += '%dns' % c.nanoseconds
+        format += "%dns" % c.nanoseconds
     return format
 
 
@@ -1012,22 +1046,25 @@ def diff_custom_calendar_timedeltas(start, end, freq):
     if not isinstance(freq, (Day, BusinessDay, CustomBusinessDay)):
         raise ValueError("freq must be Day, BusinessDay or CustomBusinessDay")
 
-    weekmask = getattr(freq, 'weekmask', None)
-    holidays = getattr(freq, 'holidays', None)
+    weekmask = getattr(freq, "weekmask", None)
+    holidays = getattr(freq, "holidays", None)
 
     if weekmask is None and holidays is None:
         if isinstance(freq, Day):
-            weekmask = 'Mon Tue Wed Thu Fri Sat Sun'
+            weekmask = "Mon Tue Wed Thu Fri Sat Sun"
             holidays = []
         elif isinstance(freq, BusinessDay):
-            weekmask = 'Mon Tue Wed Thu Fri'
+            weekmask = "Mon Tue Wed Thu Fri"
             holidays = []
 
     if weekmask is not None and holidays is not None:
         # we prefer this method as it is faster
-        actual_days = np.busday_count(np.array(start).astype('datetime64[D]'),
-                                      np.array(end).astype('datetime64[D]'),
-                                      weekmask, holidays)
+        actual_days = np.busday_count(
+            np.array(start).astype("datetime64[D]"),
+            np.array(end).astype("datetime64[D]"),
+            weekmask,
+            holidays,
+        )
     else:
         # default, it is slow
         actual_days = pd.date_range(start, end, freq=freq).shape[0] - 1
