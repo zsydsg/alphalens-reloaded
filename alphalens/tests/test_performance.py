@@ -48,20 +48,19 @@ from ..utils import (get_forward_returns_columns,
 
 
 class PerformanceTestCase(TestCase):
-    dr = date_range(start='2015-1-1', end='2015-1-2')
-    dr.name = 'date'
+    dr = date_range(start='2015-1-1', end='2015-1-2', name='date')
     tickers = ['A', 'B', 'C', 'D']
-    factor = DataFrame(index=dr,
-                       columns=tickers,
-                       data=[[1, 2, 3, 4],
-                             [4, 3, 2, 1]]).stack()
+    factor = (DataFrame(index=dr,
+                        columns=tickers,
+                        data=[[1, 2, 3, 4],
+                              [4, 3, 2, 1]])
+              .stack()
+              .rename('factor'))
     factor.index = factor.index.set_names(['date', 'asset'])
-    factor.name = 'factor'
-    factor_data = DataFrame()
-    factor_data['factor'] = factor
-    factor_data['group'] = Series(index=factor.index,
-                                  data=[1, 1, 2, 2, 1, 1, 2, 2],
-                                  dtype="category")
+    factor_data = DataFrame({'factor': factor,
+                             'group': Series(index=factor.index,
+                                             data=[1, 1, 2, 2, 1, 1, 2, 2],
+                                             dtype="category")})
 
     @parameterized.expand([(factor_data, [4, 3, 2, 1, 1, 2, 3, 4],
                             False, False,

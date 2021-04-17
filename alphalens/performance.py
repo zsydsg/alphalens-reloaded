@@ -240,17 +240,27 @@ def factor_returns(factor_data,
         Period wise factor returns
     """
 
-    weights = \
-        factor_weights(factor_data, demeaned, group_adjust, equal_weight)
+    date_idx = factor_data.index.names.index('date')
+    freq = factor_data.index.levels[date_idx].freq
 
-    weighted_returns = \
-        factor_data[utils.get_forward_returns_columns(factor_data.columns)] \
-            .multiply(weights, axis=0)
+    weights = factor_weights(factor_data,
+                             demeaned,
+                             group_adjust,
+                             equal_weight)
+
+    s = utils.get_forward_returns_columns(factor_data.columns)
+    weighted_returns = (factor_data[s]
+                        .multiply(weights, axis=0))
 
     if by_asset:
         returns = weighted_returns
     else:
-        returns = weighted_returns.groupby(level='date').sum()
+        # requires at least one weighted return
+        # otherwise returns np.nan
+        returns = (weighted_returns
+                   .groupby(level='date')
+                   .sum(min_count=1)
+                   .asfreq(freq))
 
     return returns
 
@@ -596,8 +606,7 @@ def quantile_turnover(quantile_factor, quantile, period=1):
                                             .get_level_values('asset')))
                        .asfreq(freq))
 
-    name_shifted = quant_name_sets.shift(periods=period,
-                                         freq=freq)
+    name_shifted = quant_name_sets.shift(periods=period)
 
     new_names = (quant_name_sets - name_shifted).dropna()
     quant_turnover = (new_names.apply(lambda x: len(x)) /
