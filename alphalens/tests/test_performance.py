@@ -25,7 +25,9 @@ from pandas import (
     Int64Index,
     Index,
     DatetimeIndex,
-    Timedelta
+    Timedelta,
+    Categorical,
+    CategoricalIndex
 )
 
 from pandas.tseries.offsets import (BDay, Day, CDay)
@@ -75,13 +77,13 @@ class PerformanceTestCase(TestCase):
                            (factor_data, [1, 2, 3, 4, 4, 3, 2, 1],
                             False, True,
                             MultiIndex.from_product(
-                                [dr, [1, 2]], names=['date', 'group']),
+                                [dr, Categorical([1, 2])], names=['date', 'group']),
                             [1., 1., 1., 1.],
                             ),
                            (factor_data, [1, 2, 3, 4, 4, 3, 2, 1],
                             True, True,
                             MultiIndex.from_product(
-                                [dr, [1, 2]], names=['date', 'group']),
+                                [dr, Categorical([1, 2])], names=['date', 'group']),
                             [1., 1., 1., 1.],
                             )])
     def test_information_coefficient(self,
@@ -126,7 +128,7 @@ class PerformanceTestCase(TestCase):
                             False,
                             True,
                             None,
-                            Int64Index([1, 2], name='group'),
+                            CategoricalIndex([1, 2], name='group'),
                             [1., 1.]),
                            (factor_data,
                             [1, 2, 3, 4, 4, 3, 2, 1],
@@ -137,7 +139,7 @@ class PerformanceTestCase(TestCase):
                                 [DatetimeIndex(['2015-01-04'],
                                                name='date',
                                                freq='W-SUN'),
-                                 [1, 2]], names=['date', 'group']),
+                                 Categorical([1, 2])], names=['date', 'group']),
                             [1., 1.])])
     def test_mean_information_coefficient(self,
                                           factor_data,
