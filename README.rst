@@ -13,8 +13,8 @@ Alphalens is a Python Library for performance analysis of predictive
 `Pyfolio <https://github.com/quantopian/pyfolio>`__ which provides
 performance and risk analysis of financial portfolios. You can try Alphalens
 at  `Quantopian <https://www.quantopian.com>`_ -- a free,
-community-centered, hosted platform for researching and testing alpha ideas. 
-Quantopian also offers a `fully managed service for professionals <https://factset.quantopian.com>`_ 
+community-centered, hosted platform for researching and testing alpha ideas.
+Quantopian also offers a `fully managed service for professionals <https://factset.quantopian.com>`_
 that includes Zipline, Alphalens, Pyfolio, FactSet data, and more.
 
 The main function of Alphalens is to surface the most relevant statistics
@@ -33,10 +33,10 @@ With a signal and pricing data creating a factor "tear sheet" is a two step proc
 .. code:: python
 
     import alphalens
-    
+
     # Ingest and format data
-    factor_data = alphalens.utils.get_clean_factor_and_forward_returns(my_factor, 
-                                                                       pricing, 
+    factor_data = alphalens.utils.get_clean_factor_and_forward_returns(my_factor,
+                                                                       pricing,
                                                                        quantiles=5,
                                                                        groupby=ticker_sector,
                                                                        groupby_labels=sector_names)
@@ -60,7 +60,7 @@ Install with pip:
 
     pip install alphalens
 
-Install with conda: 
+Install with conda:
 
 ::
 

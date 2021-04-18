@@ -9,5 +9,3 @@ Information on a specific functions, classes, or methods.
 - :mod:`alphalens.performance`
 - :mod:`alphalens.plotting`
 - :mod:`alphalens.utils`
-
-

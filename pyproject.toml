@@ -11,16 +11,10 @@ build-backend = 'setuptools.build_meta'
 
 [tool.black]
 target-version = ['py37', 'py38']
-line-length = 79
-exclude = '''
-(
-    asv_bench/env
-  | \.egg
-  | \.git
-  | \.hg
-  | _build
-  | build
-  | dist
-  | setup.py
-)
+line-length = 88
+include = '\.pyi?$'
+extend-exclude = '''
+\(
+  docs/source/conf.py
+\)
 '''

@@ -9,15 +9,12 @@ from setuptools import setup, find_packages
 # https://github.com/python-versioneer/python-versioneer/issues/193
 sys.path.append(Path(__file__).resolve(strict=True).parent.as_posix())
 import versioneer  # noqa: E402
-import versioneer
 
 
 if __name__ == "__main__":
     setup(
         version=versioneer.get_version(),
         cmdclass=versioneer.get_cmdclass(),
-        packages=find_packages(include='alphalens.*'),
-        package_data={
-            'alphalens': ['examples/*'],
-        },
+        packages=find_packages(include="alphalens.*"),
+        package_data={"alphalens": ["examples/*"]},
     )
