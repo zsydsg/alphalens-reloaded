@@ -73,7 +73,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Sleep for 1 min
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '60s'
+
       - name: Install wheel
         run: |
-          pip install -i https://test.pypi.org/simple/ alphalens-reloaded[test]
+          pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple your-package alphalens-reloaded[test]
           nosetests alphalens.tests
