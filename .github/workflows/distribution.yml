@@ -59,6 +59,11 @@ jobs:
           #          user: __token__
           #          password: ${{ secrets.PYPI_TOKEN }}
 
+      - name: Sleep for 1 min
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '60s'
+
   test_wheels:
     needs: [ upload_pypi ]
     runs-on: ${{ matrix.os }}
@@ -73,12 +78,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Sleep for 1 min
-        uses: jakejarvis/wait-action@master
-        with:
-          time: '60s'
-
       - name: Install wheel
         run: |
+          pip install -U pip wheel
           pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple your-package alphalens-reloaded[test]
-          nosetests alphalens.tests
+          pip install tox tox-gh-actions
+          tox -p auto -q
