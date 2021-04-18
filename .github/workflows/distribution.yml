@@ -26,8 +26,7 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: dist
-          path: dist
+          path: dist/*
 
       - name: Check metadata
         run: pipx run twine check dist/*
@@ -58,6 +57,7 @@ jobs:
           #          password: ${{ secrets.PYPI_TOKEN }}
 
   test_wheels:
+    needs: [ upload_pypi ]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -70,7 +70,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-#      - name: Install wheel
-#        run: |
-#          pip install alphalens[test]
-#          nosetests alphalens.tests
+      - name: Install wheel
+        run: |
+          pip install alphalens[test]
+          nosetests alphalens.tests
