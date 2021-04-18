@@ -10,6 +10,16 @@ from setuptools import setup, find_packages
 sys.path.append(Path(__file__).resolve(strict=True).parent.as_posix())
 import versioneer  # noqa: E402
 
+install_reqs = [
+    "matplotlib>=1.4.0",
+    "numpy>=1.9.1",
+    "pandas>=0.18.0",
+    "scipy>=0.14.0",
+    "seaborn>=0.6.0",
+    "statsmodels>=0.6.1",
+    "IPython>=3.2.3",
+    "empyrical>=0.5.0",
+]
 
 if __name__ == "__main__":
     setup(
@@ -17,4 +27,5 @@ if __name__ == "__main__":
         cmdclass=versioneer.get_cmdclass(),
         packages=find_packages(include="alphalens.*"),
         package_data={"alphalens": ["examples/*"]},
+        install_requires=install_reqs,
     )
