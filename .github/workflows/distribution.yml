@@ -1,4 +1,4 @@
-name: Alphalens distribution
+name: Alphalens Wheels & Source Distribution
 
 on: workflow_dispatch
 
@@ -8,11 +8,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        python-version: [3.7, 3.8, 3.9]
+        os: [ ubuntu-latest ]
+        python-version: [ 3.8 ]
 
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout alphalens
+        uses: actions/checkout@v2
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -25,7 +26,8 @@ jobs:
       - name: Store artifacts
         uses: actions/upload-artifact@v2
         with:
-          path: dist/*
+          name: dist
+          path: dist
 
       - name: Check metadata
         run: pipx run twine check dist/*
@@ -48,9 +50,27 @@ jobs:
           user: __token__
           password: ${{ secrets.TESTPYPI_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
-#      - name: publish to pypi
-#        uses: pypa/gh-action-pypi-publish@master
-#        if: startsWith(github.event.head_commit.message, 'PYPI')
-#        with:
-#          user: __token__
-#          password: ${{ secrets.PYPI_TOKEN }}
+          #      - name: publish to pypi
+          #        uses: pypa/gh-action-pypi-publish@master
+          #        if: startsWith(github.event.head_commit.message, 'PYPI')
+          #        with:
+          #          user: __token__
+          #          password: ${{ secrets.PYPI_TOKEN }}
+
+  test_wheels:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        python-version: [ 3.8 ]
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+#      - name: Install wheel
+#        run: |
+#          pip install alphalens[test]
+#          nosetests alphalens.tests
