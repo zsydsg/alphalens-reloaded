@@ -47,7 +47,10 @@ from ..performance import (
     average_cumulative_return_by_quantile,
 )
 
-from ..utils import get_forward_returns_columns, get_clean_factor_and_forward_returns
+from ..utils import (
+    get_forward_returns_columns,
+    get_clean_factor_and_forward_returns,
+)
 
 
 class PerformanceTestCase(TestCase):
@@ -63,15 +66,31 @@ class PerformanceTestCase(TestCase):
         {
             "factor": factor,
             "group": Series(
-                index=factor.index, data=[1, 1, 2, 2, 1, 1, 2, 2], dtype="category"
+                index=factor.index,
+                data=[1, 1, 2, 2, 1, 1, 2, 2],
+                dtype="category",
             ),
         }
     )
 
     @parameterized.expand(
         [
-            (factor_data, [4, 3, 2, 1, 1, 2, 3, 4], False, False, dr, [-1.0, -1.0]),
-            (factor_data, [1, 2, 3, 4, 4, 3, 2, 1], False, False, dr, [1.0, 1.0]),
+            (
+                factor_data,
+                [4, 3, 2, 1, 1, 2, 3, 4],
+                False,
+                False,
+                dr,
+                [-1.0, -1.0],
+            ),
+            (
+                factor_data,
+                [1, 2, 3, 4, 4, 3, 2, 1],
+                False,
+                False,
+                dr,
+                [1.0, 1.0],
+            ),
             (
                 factor_data,
                 [1, 2, 3, 4, 4, 3, 2, 1],
@@ -104,10 +123,14 @@ class PerformanceTestCase(TestCase):
         expected_ic_val,
     ):
 
-        factor_data["1D"] = Series(index=factor_data.index, data=forward_returns)
+        factor_data["1D"] = Series(
+            index=factor_data.index, data=forward_returns
+        )
 
         ic = factor_information_coefficient(
-            factor_data=factor_data, group_adjust=group_adjust, by_group=by_group
+            factor_data=factor_data,
+            group_adjust=group_adjust,
+            by_group=by_group,
         )
 
         expected_ic_df = DataFrame(
@@ -155,7 +178,9 @@ class PerformanceTestCase(TestCase):
                 "W",
                 MultiIndex.from_product(
                     [
-                        DatetimeIndex(["2015-01-04"], name="date", freq="W-SUN"),
+                        DatetimeIndex(
+                            ["2015-01-04"], name="date", freq="W-SUN"
+                        ),
                         Categorical([1, 2]),
                     ],
                     names=["date", "group"],
@@ -175,10 +200,15 @@ class PerformanceTestCase(TestCase):
         expected_ic_val,
     ):
 
-        factor_data["1D"] = Series(index=factor_data.index, data=forward_returns)
+        factor_data["1D"] = Series(
+            index=factor_data.index, data=forward_returns
+        )
 
         ic = mean_information_coefficient(
-            factor_data, group_adjust=group_adjust, by_group=by_group, by_time=by_time
+            factor_data,
+            group_adjust=group_adjust,
+            by_group=by_group,
+            by_time=by_time,
         )
 
         expected_ic_df = DataFrame(
@@ -281,7 +311,9 @@ class PerformanceTestCase(TestCase):
 
         factor_index = date_range(start=start, end=factor_end)
         factor_index.name = "date"
-        factor = DataFrame(index=factor_index, columns=tickers, data=factor).stack()
+        factor = DataFrame(
+            index=factor_index, columns=tickers, data=factor
+        ).stack()
 
         factor_data = get_clean_factor_and_forward_returns(
             factor,
@@ -566,7 +598,10 @@ class PerformanceTestCase(TestCase):
     ):
 
         dr = date_range(
-            start="2015-1-1", periods=len(quantile_values), freq=freq, name="date"
+            start="2015-1-1",
+            periods=len(quantile_values),
+            freq=freq,
+            name="date",
         )
         tickers = ["A", "B", "C", "D"]
 
@@ -599,7 +634,19 @@ class PerformanceTestCase(TestCase):
                 False,
                 False,
                 False,
-                [0.30, 0.40, 0.20, 0.10, 0.30, 0.40, -0.20, -0.10, 0.375, 0.125, 0.50],
+                [
+                    0.30,
+                    0.40,
+                    0.20,
+                    0.10,
+                    0.30,
+                    0.40,
+                    -0.20,
+                    -0.10,
+                    0.375,
+                    0.125,
+                    0.50,
+                ],
             ),
             (
                 [[3, 4, 2, 1, nan], [3, 4, -2, -1, nan], [3, nan, nan, 1, 4]],
@@ -670,7 +717,19 @@ class PerformanceTestCase(TestCase):
                 True,
                 True,
                 False,
-                [0.25, 0.25, -0.25, -0.25, 0.25, 0.25, -0.25, -0.25, -0.50, nan, 0.50],
+                [
+                    0.25,
+                    0.25,
+                    -0.25,
+                    -0.25,
+                    0.25,
+                    0.25,
+                    -0.25,
+                    -0.25,
+                    -0.50,
+                    nan,
+                    0.50,
+                ],
             ),
             (
                 [[3, 4, 2, 1, 5], [3, 4, -2, -1, 5], [3, nan, nan, 1, nan]],
@@ -713,7 +772,19 @@ class PerformanceTestCase(TestCase):
                 True,
                 False,
                 True,
-                [-0.25, 0.25, -0.25, 0.25, 0.25, 0.25, -0.25, -0.25, 0.0, -0.50, 0.50],
+                [
+                    -0.25,
+                    0.25,
+                    -0.25,
+                    0.25,
+                    0.25,
+                    0.25,
+                    -0.25,
+                    -0.25,
+                    0.0,
+                    -0.50,
+                    0.50,
+                ],
             ),
             (
                 [
@@ -803,7 +874,9 @@ class PerformanceTestCase(TestCase):
     ):
 
         index = date_range("1/12/2000", periods=len(factor_vals))
-        factor = DataFrame(index=index, columns=tickers, data=factor_vals).stack()
+        factor = DataFrame(
+            index=index, columns=tickers, data=factor_vals
+        ).stack()
         factor.index = factor.index.set_names(["date", "asset"])
         factor.name = "factor"
 
@@ -815,9 +888,13 @@ class PerformanceTestCase(TestCase):
             data=groups[factor.index.get_level_values("asset")].values,
         )
 
-        weights = factor_weights(factor_data, demeaned, group_adjust, equal_weight)
+        weights = factor_weights(
+            factor_data, demeaned, group_adjust, equal_weight
+        )
 
-        expected = Series(data=expected_vals, index=factor_data.index, name="factor")
+        expected = Series(
+            data=expected_vals, index=factor_data.index, name="factor"
+        )
 
         assert_series_equal(weights, expected)
 
@@ -829,10 +906,30 @@ class PerformanceTestCase(TestCase):
                 False,
                 [-1.25000, -1.25000],
             ),
-            ([1, 1, 1, 1, 1, 1, 1, 1], [4, 3, 2, 1, 1, 2, 3, 4], False, [nan, nan]),
-            ([1, 2, 3, 4, 4, 3, 2, 1], [4, 3, 2, 1, 1, 2, 3, 4], True, [-0.5, -0.5]),
-            ([1, 2, 3, 4, 1, 2, 3, 4], [1, 4, 1, 2, 1, 2, 2, 1], True, [1.0, 0.0]),
-            ([1, 1, 1, 1, 1, 1, 1, 1], [4, 3, 2, 1, 1, 2, 3, 4], True, [nan, nan]),
+            (
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [4, 3, 2, 1, 1, 2, 3, 4],
+                False,
+                [nan, nan],
+            ),
+            (
+                [1, 2, 3, 4, 4, 3, 2, 1],
+                [4, 3, 2, 1, 1, 2, 3, 4],
+                True,
+                [-0.5, -0.5],
+            ),
+            (
+                [1, 2, 3, 4, 1, 2, 3, 4],
+                [1, 4, 1, 2, 1, 2, 2, 1],
+                True,
+                [1.0, 0.0],
+            ),
+            (
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [4, 3, 2, 1, 1, 2, 3, 4],
+                True,
+                [nan, nan],
+            ),
         ]
     )
     def test_factor_returns(
@@ -871,7 +968,12 @@ class PerformanceTestCase(TestCase):
 
     @parameterized.expand(
         [
-            ([1.0, 0.5, 1.0, 0.5, 0.5], "1D", "1D", [2.0, 3.0, 6.0, 9.0, 13.50]),
+            (
+                [1.0, 0.5, 1.0, 0.5, 0.5],
+                "1D",
+                "1D",
+                [2.0, 3.0, 6.0, 9.0, 13.50],
+            ),
             (
                 [0.1, 0.1, 0.1, 0.1, 0.1],
                 "1D",
@@ -884,7 +986,12 @@ class PerformanceTestCase(TestCase):
                 "1D",
                 [0.9, 0.81, 0.729, 0.6561, 0.59049],
             ),
-            ([1.0, 0.5, 1.0, 0.5, 0.5], "1B", "1D", [2.0, 3.0, 6.0, 9.0, 13.50]),
+            (
+                [1.0, 0.5, 1.0, 0.5, 0.5],
+                "1B",
+                "1D",
+                [2.0, 3.0, 6.0, 9.0, 13.50],
+            ),
             (
                 [0.1, 0.1, 0.1, 0.1, 0.1],
                 "1B",
@@ -897,7 +1004,12 @@ class PerformanceTestCase(TestCase):
                 "1D",
                 [0.9, 0.81, 0.729, 0.6561, 0.59049],
             ),
-            ([1.0, 0.5, 1.0, 0.5, 0.5], "1CD", "1D", [2.0, 3.0, 6.0, 9.0, 13.50]),
+            (
+                [1.0, 0.5, 1.0, 0.5, 0.5],
+                "1CD",
+                "1D",
+                [2.0, 3.0, 6.0, 9.0, 13.50],
+            ),
             (
                 [0.1, 0.1, 0.1, 0.1, 0.1],
                 "1CD",
@@ -912,7 +1024,9 @@ class PerformanceTestCase(TestCase):
             ),
         ]
     )
-    def test_cumulative_returns(self, returns, ret_freq, period_len, expected_vals):
+    def test_cumulative_returns(
+        self, returns, ret_freq, period_len, expected_vals
+    ):
         if "CD" in ret_freq:
             ret_freq_class = CDay(weekmask="Tue Wed Thu Fri Sun")
             ret_freq = ret_freq_class
@@ -994,7 +1108,20 @@ class PerformanceTestCase(TestCase):
                 ],
                 "1B",
                 3,
-                [nan, nan, nan, 1.0, 1.0, 1.0, 0.6, -0.6, -1.0, 1.0, -0.6, -1.0],
+                [
+                    nan,
+                    nan,
+                    nan,
+                    1.0,
+                    1.0,
+                    1.0,
+                    0.6,
+                    -0.6,
+                    -1.0,
+                    1.0,
+                    -0.6,
+                    -1.0,
+                ],
             ),
             (
                 [
@@ -1013,7 +1140,20 @@ class PerformanceTestCase(TestCase):
                 ],
                 "1D",
                 3,
-                [nan, nan, nan, 1.0, 1.0, 1.0, 0.6, -0.6, -1.0, 1.0, -0.6, -1.0],
+                [
+                    nan,
+                    nan,
+                    nan,
+                    1.0,
+                    1.0,
+                    1.0,
+                    0.6,
+                    -0.6,
+                    -1.0,
+                    1.0,
+                    -0.6,
+                    -1.0,
+                ],
             ),
         ]
     )
@@ -1022,7 +1162,10 @@ class PerformanceTestCase(TestCase):
     ):
 
         dr = date_range(
-            start="2015-1-1", periods=len(factor_values), freq=freq, name="date"
+            start="2015-1-1",
+            periods=len(factor_values),
+            freq=freq,
+            name="date",
         )
 
         tickers = ["A", "B", "C", "D"]
@@ -1226,7 +1369,9 @@ class PerformanceTestCase(TestCase):
         )
         cmrt = DataFrame({"mean": cmrt.mean(axis=1), "std": cmrt.std(axis=1)})
         expected = DataFrame(
-            index=range(-before, after + 1), columns=["mean", "std"], data=expected_vals
+            index=range(-before, after + 1),
+            columns=["mean", "std"],
+            data=expected_vals,
         )
         assert_frame_equal(cmrt, expected)
 
@@ -1503,7 +1648,8 @@ class PerformanceTestCase(TestCase):
         tickers = ["A", "B", "C", "D", "E", "F"]
         r1, r2, r3, r4 = (1.25, 1.50, 1.00, 0.50)
         data = [
-            [r1 ** i, r2 ** i, r3 ** i, r4 ** i, r2 ** i, r3 ** i] for i in range(1, 12)
+            [r1 ** i, r2 ** i, r3 ** i, r4 ** i, r2 ** i, r3 ** i]
+            for i in range(1, 12)
         ]
         prices = DataFrame(index=dr, columns=tickers, data=data)
         dr2 = date_range(start="2015-1-18", end="2015-1-21")

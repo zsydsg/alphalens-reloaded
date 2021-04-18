@@ -38,7 +38,9 @@ from ..utils import (
 
 pandas_version = StrictVersion(pd.__version__)
 
-pandas_one_point_zero = StrictVersion("1.0") < pandas_version < StrictVersion("1.1")
+pandas_one_point_zero = (
+    StrictVersion("1.0") < pandas_version < StrictVersion("1.1")
+)
 
 
 class UtilsTestCase(TestCase):
@@ -74,7 +76,9 @@ class UtilsTestCase(TestCase):
 
     def test_compute_forward_returns(self):
         dr = date_range(start="2015-1-1", end="2015-1-3")
-        prices = DataFrame(index=dr, columns=["A", "B"], data=[[1, 1], [1, 2], [2, 1]])
+        prices = DataFrame(
+            index=dr, columns=["A", "B"], data=[[1, 1], [1, 2], [2, 1]]
+        )
         factor = prices.stack()
 
         fp = compute_forward_returns(factor, prices, periods=[1, 2])
@@ -95,7 +99,9 @@ class UtilsTestCase(TestCase):
         )
 
         dr = date_range(start="2015-1-1", end="2015-1-3")
-        factor = DataFrame(index=dr, columns=["A", "B"], data=[[1, 1], [1, 2], [2, 1]])
+        factor = DataFrame(
+            index=dr, columns=["A", "B"], data=[[1, 1], [1, 2], [2, 1]]
+        )
         factor = factor.stack()
 
         fp = compute_forward_returns(factor, prices, periods=[1, 2])
@@ -109,7 +115,9 @@ class UtilsTestCase(TestCase):
 
     def test_compute_forward_returns_non_cum(self):
         dr = date_range(start="2015-1-1", end="2015-1-3")
-        prices = DataFrame(index=dr, columns=["A", "B"], data=[[1, 1], [1, 2], [2, 1]])
+        prices = DataFrame(
+            index=dr, columns=["A", "B"], data=[[1, 1], [1, 2], [2, 1]]
+        )
         factor = prices.stack()
 
         fp = compute_forward_returns(
@@ -200,7 +208,14 @@ class UtilsTestCase(TestCase):
                 False,
                 [1, 2, 3, 3, 3, 3, 2, 1],
             ),
-            (factor_data, [0, 0.5, 1.0], None, False, False, [1, 1, 2, 2, 2, 2, 1, 1]),
+            (
+                factor_data,
+                [0, 0.5, 1.0],
+                None,
+                False,
+                False,
+                [1, 1, 2, 2, 2, 2, 1, 1],
+            ),
             (
                 factor_data,
                 [0.25, 0.5, 0.75],
@@ -209,7 +224,14 @@ class UtilsTestCase(TestCase):
                 False,
                 [nan, 1, 2, nan, nan, 2, 1, nan],
             ),
-            (factor_data, [0, 0.5, 1.0], None, True, False, [1, 2, 1, 2, 2, 1, 2, 1]),
+            (
+                factor_data,
+                [0, 0.5, 1.0],
+                None,
+                True,
+                False,
+                [1, 2, 1, 2, 2, 1, 2, 1],
+            ),
             (
                 factor_data,
                 [0.5, 1.0],
@@ -218,7 +240,14 @@ class UtilsTestCase(TestCase):
                 False,
                 [nan, 1, nan, 1, 1, nan, 1, nan],
             ),
-            (factor_data, [0, 1.0], None, True, False, [1, 1, 1, 1, 1, 1, 1, 1]),
+            (
+                factor_data,
+                [0, 1.0],
+                None,
+                True,
+                False,
+                [1, 1, 1, 1, 1, 1, 1, 1],
+            ),
             (factor_data, None, 4, False, False, [1, 2, 3, 4, 4, 3, 2, 1]),
             (factor_data, None, 2, False, False, [1, 1, 2, 2, 2, 2, 1, 1]),
             (factor_data, None, 3, False, False, [1, 1, 2, 3, 3, 2, 1, 1]),
@@ -239,7 +268,14 @@ class UtilsTestCase(TestCase):
                 False,
                 [nan, 1, 2, nan, nan, 2, 1, nan],
             ),
-            (factor_data, None, [0, 2, 5], False, False, [1, 1, 2, 2, 2, 2, 1, 1]),
+            (
+                factor_data,
+                None,
+                [0, 2, 5],
+                False,
+                False,
+                [1, 1, 2, 2, 2, 2, 1, 1],
+            ),
             (
                 factor_data,
                 None,
@@ -308,11 +344,22 @@ class UtilsTestCase(TestCase):
         ).stack()
 
         factor_data = get_clean_factor_and_forward_returns(
-            factor, prices, groupby=factor_groups, quantiles=4, periods=(1, 2, 3)
+            factor,
+            prices,
+            groupby=factor_groups,
+            quantiles=4,
+            periods=(1, 2, 3),
         )
 
         expected_idx = factor.index.rename(["date", "asset"])
-        expected_cols = ["1D", "2D", "3D", "factor", "group", "factor_quantile"]
+        expected_cols = [
+            "1D",
+            "2D",
+            "3D",
+            "factor",
+            "group",
+            "factor_quantile",
+        ]
         expected_data = [
             [0.1, 0.21, 0.331, 3.0, 1, 3],
             [-0.5, -0.75, -0.875, 4.0, 2, 4],
@@ -369,11 +416,22 @@ class UtilsTestCase(TestCase):
         ).stack()
 
         factor_data = get_clean_factor_and_forward_returns(
-            factor, prices, groupby=factor_groups, quantiles=4, periods=(1, 2, 3)
+            factor,
+            prices,
+            groupby=factor_groups,
+            quantiles=4,
+            periods=(1, 2, 3),
         )
 
         expected_idx = factor.index.rename(["date", "asset"])
-        expected_cols = ["1D", "2D", "3D", "factor", "group", "factor_quantile"]
+        expected_cols = [
+            "1D",
+            "2D",
+            "3D",
+            "factor",
+            "group",
+            "factor_quantile",
+        ]
         expected_data = [
             [0.1, 0.21, 0.331, 3.0, 1, 3],
             [-0.5, -0.75, -0.875, 4.0, 2, 4],
@@ -421,30 +479,51 @@ class UtilsTestCase(TestCase):
         price_index = date_range(start=start, end=price_end, freq="B")
         price_index.name = "date"
         today_open = DataFrame(
-            index=price_index + Timedelta("9h30m"), columns=tickers, data=price_data
+            index=price_index + Timedelta("9h30m"),
+            columns=tickers,
+            data=price_data,
         )
         today_open_1h = DataFrame(
-            index=price_index + Timedelta("10h30m"), columns=tickers, data=price_data
+            index=price_index + Timedelta("10h30m"),
+            columns=tickers,
+            data=price_data,
         )
         today_open_1h += today_open_1h * 0.001
         today_open_3h = DataFrame(
-            index=price_index + Timedelta("12h30m"), columns=tickers, data=price_data
+            index=price_index + Timedelta("12h30m"),
+            columns=tickers,
+            data=price_data,
         )
         today_open_3h -= today_open_3h * 0.002
-        prices = concat([today_open, today_open_1h, today_open_3h]).sort_index()
+        prices = concat(
+            [today_open, today_open_1h, today_open_3h]
+        ).sort_index()
 
         factor_index = date_range(start=start, end=factor_end, freq="B")
         factor_index.name = "date"
         factor = DataFrame(
-            index=factor_index + Timedelta("9h30m"), columns=tickers, data=factor_data
+            index=factor_index + Timedelta("9h30m"),
+            columns=tickers,
+            data=factor_data,
         ).stack()
 
         factor_data = get_clean_factor_and_forward_returns(
-            factor, prices, groupby=factor_groups, quantiles=4, periods=(1, 2, 3)
+            factor,
+            prices,
+            groupby=factor_groups,
+            quantiles=4,
+            periods=(1, 2, 3),
         )
 
         expected_idx = factor.index.rename(["date", "asset"])
-        expected_cols = ["1h", "3h", "1D", "factor", "group", "factor_quantile"]
+        expected_cols = [
+            "1h",
+            "3h",
+            "1D",
+            "factor",
+            "group",
+            "factor_quantile",
+        ]
         expected_data = [
             [0.001, -0.002, 0.1, 3.0, 1, 3],
             [0.001, -0.002, -0.5, 4.0, 2, 4],
@@ -498,11 +577,22 @@ class UtilsTestCase(TestCase):
         ).stack()
 
         factor_data = get_clean_factor_and_forward_returns(
-            factor, prices, groupby=factor_groups, quantiles=4, periods=(1, 2, 3)
+            factor,
+            prices,
+            groupby=factor_groups,
+            quantiles=4,
+            periods=(1, 2, 3),
         )
 
         expected_idx = factor.index.rename(["date", "asset"])
-        expected_cols = ["1D", "2D", "3D", "factor", "group", "factor_quantile"]
+        expected_cols = [
+            "1D",
+            "2D",
+            "3D",
+            "factor",
+            "group",
+            "factor_quantile",
+        ]
         expected_data = [
             [0.1, 0.21, 0.331, 1.0, 1, 1],
             [0.0, 0.00, 0.000, 6.0, 2, 4],
@@ -553,30 +643,53 @@ class UtilsTestCase(TestCase):
         price_index = price_index.drop(holidays)
 
         today_open = DataFrame(
-            index=price_index + Timedelta("9h30m"), columns=tickers, data=price_data
+            index=price_index + Timedelta("9h30m"),
+            columns=tickers,
+            data=price_data,
         )
         today_open_1h = DataFrame(
-            index=price_index + Timedelta("10h30m"), columns=tickers, data=price_data
+            index=price_index + Timedelta("10h30m"),
+            columns=tickers,
+            data=price_data,
         )
         today_open_1h += today_open_1h * 0.001
         today_open_3h = DataFrame(
-            index=price_index + Timedelta("12h30m"), columns=tickers, data=price_data
+            index=price_index + Timedelta("12h30m"),
+            columns=tickers,
+            data=price_data,
         )
         today_open_3h -= today_open_3h * 0.002
-        prices = concat([today_open, today_open_1h, today_open_3h]).sort_index()
+        prices = concat(
+            [today_open, today_open_1h, today_open_3h]
+        ).sort_index()
 
-        factor_index = date_range(start=start, end=factor_end, freq="B", name="date")
+        factor_index = date_range(
+            start=start, end=factor_end, freq="B", name="date"
+        )
         factor_index = factor_index.drop(holidays)
         factor = DataFrame(
-            index=factor_index + Timedelta("9h30m"), columns=tickers, data=factor_data
+            index=factor_index + Timedelta("9h30m"),
+            columns=tickers,
+            data=factor_data,
         ).stack()
 
         factor_data = get_clean_factor_and_forward_returns(
-            factor, prices, groupby=factor_groups, quantiles=4, periods=(1, 2, 3)
+            factor,
+            prices,
+            groupby=factor_groups,
+            quantiles=4,
+            periods=(1, 2, 3),
         )
 
         expected_idx = factor.index.rename(["date", "asset"])
-        expected_cols = ["1h", "3h", "1D", "factor", "group", "factor_quantile"]
+        expected_cols = [
+            "1h",
+            "3h",
+            "1D",
+            "factor",
+            "group",
+            "factor_quantile",
+        ]
         expected_data = [
             [0.001, -0.002, 0.1, 3.0, 1, 3],
             [0.001, -0.002, -0.5, 4.0, 2, 4],
@@ -642,11 +755,22 @@ class UtilsTestCase(TestCase):
         ).stack()
 
         factor_data = get_clean_factor_and_forward_returns(
-            factor, prices, groupby=factor_groups, quantiles=4, periods=(1, 2, 3)
+            factor,
+            prices,
+            groupby=factor_groups,
+            quantiles=4,
+            periods=(1, 2, 3),
         )
 
         expected_idx = factor.index.rename(["date", "asset"])
-        expected_cols = ["1D", "2D", "3D", "factor", "group", "factor_quantile"]
+        expected_cols = [
+            "1D",
+            "2D",
+            "3D",
+            "factor",
+            "group",
+            "factor_quantile",
+        ]
         expected_data = [
             [0.1, 0.21, 0.331, 3.0, 1, 3],
             [-0.5, -0.75, -0.875, 4.0, 2, 4],

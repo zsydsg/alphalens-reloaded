@@ -135,8 +135,13 @@ def quantize_factor(
     ):
         raise ValueError("Either quantiles or bins should be provided")
 
-    if zero_aware and not (isinstance(quantiles, int) or isinstance(bins, int)):
-        msg = "zero_aware should only be True when quantiles or bins is an" " integer"
+    if zero_aware and not (
+        isinstance(quantiles, int) or isinstance(bins, int)
+    ):
+        msg = (
+            "zero_aware should only be True when quantiles or bins is an"
+            " integer"
+        )
         raise ValueError(msg)
 
     def quantile_calc(x, _quantiles, _bins, _zero_aware, _no_raise):
@@ -149,12 +154,18 @@ def quantize_factor(
                     + _quantiles // 2
                     + 1
                 )
-                neg_quantiles = pd.qcut(x[x < 0], _quantiles // 2, labels=False) + 1
+                neg_quantiles = (
+                    pd.qcut(x[x < 0], _quantiles // 2, labels=False) + 1
+                )
                 return pd.concat([pos_quantiles, neg_quantiles]).sort_index()
             elif _bins is not None and _quantiles is None and not _zero_aware:
                 return pd.cut(x, _bins, labels=False) + 1
             elif _bins is not None and _quantiles is None and _zero_aware:
-                pos_bins = pd.cut(x[x >= 0], _bins // 2, labels=False) + _bins // 2 + 1
+                pos_bins = (
+                    pd.cut(x[x >= 0], _bins // 2, labels=False)
+                    + _bins // 2
+                    + 1
+                )
                 neg_bins = pd.cut(x[x < 0], _bins // 2, labels=False) + 1
                 return pd.concat([pos_bins, neg_bins]).sort_index()
         except Exception as e:
@@ -207,7 +218,9 @@ def infer_trading_calendar(factor_idx, prices_idx):
         # look for holidays
         used_weekdays = full_idx[weekday_mask].normalize()
         all_weekdays = pd.date_range(
-            full_idx.min(), full_idx.max(), freq=CustomBusinessDay(weekmask=day_str)
+            full_idx.min(),
+            full_idx.max(),
+            freq=CustomBusinessDay(weekmask=day_str),
         ).normalize()
         _holidays = all_weekdays.difference(used_weekdays)
         _holidays = [timestamp.date() for timestamp in _holidays]
@@ -218,7 +231,11 @@ def infer_trading_calendar(factor_idx, prices_idx):
 
 
 def compute_forward_returns(
-    factor, prices, periods=(1, 5, 10), filter_zscore=None, cumulative_returns=True
+    factor,
+    prices,
+    periods=(1, 5, 10),
+    filter_zscore=None,
+    cumulative_returns=True,
 ):
     """
     Finds the N period forward returns (as percent change) for each asset
@@ -313,7 +330,11 @@ def compute_forward_returns(
             if i >= len(forward_returns.index):
                 break
             p_idx = prices.index.get_loc(forward_returns.index[i])
-            if p_idx is None or p_idx < 0 or (p_idx + period) >= len(prices.index):
+            if (
+                p_idx is None
+                or p_idx < 0
+                or (p_idx + period) >= len(prices.index)
+            ):
                 continue
             start = prices.index[p_idx]
             end = prices.index[p_idx + period]
@@ -608,7 +629,9 @@ def get_clean_factor(
                 groupby.keys()
             )
             if len(diff) > 0:
-                raise KeyError("Assets {} not in group mapping".format(list(diff)))
+                raise KeyError(
+                    "Assets {} not in group mapping".format(list(diff))
+                )
 
             ss = pd.Series(groupby)
             groupby = pd.Series(
@@ -619,10 +642,14 @@ def get_clean_factor(
         if groupby_labels is not None:
             diff = set(groupby.values) - set(groupby_labels.keys())
             if len(diff) > 0:
-                raise KeyError("groups {} not in passed group names".format(list(diff)))
+                raise KeyError(
+                    "groups {} not in passed group names".format(list(diff))
+                )
 
             sn = pd.Series(groupby_labels)
-            groupby = pd.Series(index=groupby.index, data=sn[groupby.values].values)
+            groupby = pd.Series(
+                index=groupby.index, data=sn[groupby.values].values
+            )
 
         merged_data["group"] = groupby.astype("category")
 
@@ -653,9 +680,12 @@ def get_clean_factor(
     )
 
     if tot_loss > max_loss:
-        message = "max_loss (%.1f%%) exceeded %.1f%%, consider increasing it." % (
-            max_loss * 100,
-            tot_loss * 100,
+        message = (
+            "max_loss (%.1f%%) exceeded %.1f%%, consider increasing it."
+            % (
+                max_loss * 100,
+                tot_loss * 100,
+            )
         )
         raise MaxLossExceededError(message)
     else:
@@ -911,7 +941,8 @@ def get_forward_returns_columns(columns, require_exact_day_multiple=False):
 
         if sum(valid_columns) < len(valid_columns):
             warnings.warn(
-                "Skipping return periods that aren't exact multiples" + " of days."
+                "Skipping return periods that aren't exact multiples"
+                + " of days."
             )
     else:
         pattern = re.compile(r"^(\d+([Dhms]|ms|us|ns]))+$", re.IGNORECASE)

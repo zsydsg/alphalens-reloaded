@@ -25,7 +25,9 @@ from statsmodels.tools.tools import add_constant
 from . import utils
 
 
-def factor_information_coefficient(factor_data, group_adjust=False, by_group=False):
+def factor_information_coefficient(
+    factor_data, group_adjust=False, by_group=False
+):
     """
     Computes the Spearman Rank Correlation based Information Coefficient (IC)
     between factor values and N period forward returns for each period in
@@ -53,9 +55,9 @@ def factor_information_coefficient(factor_data, group_adjust=False, by_group=Fal
 
     def src_ic(group):
         f = group["factor"]
-        _ic = group[utils.get_forward_returns_columns(factor_data.columns)].apply(
-            lambda x: stats.spearmanr(x, f)[0]
-        )
+        _ic = group[
+            utils.get_forward_returns_columns(factor_data.columns)
+        ].apply(lambda x: stats.spearmanr(x, f)[0])
         return _ic
 
     date_idx = factor_data.index.names.index("date")
@@ -66,7 +68,9 @@ def factor_information_coefficient(factor_data, group_adjust=False, by_group=Fal
     grouper = [factor_data.index.get_level_values("date")]
 
     if group_adjust:
-        factor_data = utils.demean_forward_returns(factor_data, grouper + ["group"])
+        factor_data = utils.demean_forward_returns(
+            factor_data, grouper + ["group"]
+        )
     if by_group:
         grouper.append("group")
 
@@ -128,7 +132,9 @@ def mean_information_coefficient(
     return ic
 
 
-def factor_weights(factor_data, demeaned=True, group_adjust=False, equal_weight=False):
+def factor_weights(
+    factor_data, demeaned=True, group_adjust=False, equal_weight=False
+):
     """
     Computes asset weights by factor values and dividing by the sum of their
     absolute value (achieving gross leverage of 1). Positive factor values will
@@ -206,7 +212,11 @@ def factor_weights(factor_data, demeaned=True, group_adjust=False, equal_weight=
 
 
 def factor_returns(
-    factor_data, demeaned=True, group_adjust=False, equal_weight=False, by_asset=False
+    factor_data,
+    demeaned=True,
+    group_adjust=False,
+    equal_weight=False,
+    by_asset=False,
 ):
     """
     Computes period wise returns for portfolio weighted by factor
@@ -251,13 +261,21 @@ def factor_returns(
     else:
         # requires at least one weighted return
         # otherwise returns np.nan
-        returns = weighted_returns.groupby(level="date").sum(min_count=1).asfreq(freq)
+        returns = (
+            weighted_returns.groupby(level="date")
+            .sum(min_count=1)
+            .asfreq(freq)
+        )
 
     return returns
 
 
 def factor_alpha_beta(
-    factor_data, returns=None, demeaned=True, group_adjust=False, equal_weight=False
+    factor_data,
+    returns=None,
+    demeaned=True,
+    group_adjust=False,
+    equal_weight=False,
 ):
     """
     Compute the alpha (excess returns), alpha t-stat (alpha significance),
@@ -296,7 +314,9 @@ def factor_alpha_beta(
     """
 
     if returns is None:
-        returns = factor_returns(factor_data, demeaned, group_adjust, equal_weight)
+        returns = factor_returns(
+            factor_data, demeaned, group_adjust, equal_weight
+        )
 
     universe_ret = (
         factor_data.groupby(level="date")[
@@ -325,7 +345,9 @@ def factor_alpha_beta(
         else:
             freq_adjust = pd.Timedelta("252Days") / pd.Timedelta(period)
 
-            alpha_beta.loc["Ann. alpha", period] = (1 + alpha) ** freq_adjust - 1
+            alpha_beta.loc["Ann. alpha", period] = (
+                1 + alpha
+            ) ** freq_adjust - 1
             alpha_beta.loc["beta", period] = beta
 
     return alpha_beta
@@ -396,7 +418,9 @@ def positions(weights, period, freq=None):
 
     if freq is None:
         freq = BDay()
-        warnings.warn("'freq' not set, using business day calendar", UserWarning)
+        warnings.warn(
+            "'freq' not set, using business day calendar", UserWarning
+        )
 
     #
     # weights index contains factor computation timestamps, then add returns
@@ -411,7 +435,9 @@ def positions(weights, period, freq=None):
     #
     # Compute portfolio weights for each point in time contained in the index
     #
-    portfolio_weights = pd.DataFrame(index=weights_idx, columns=weights.columns)
+    portfolio_weights = pd.DataFrame(
+        index=weights_idx, columns=weights.columns
+    )
     active_weights = []
 
     for curr_time in weights_idx:
@@ -422,7 +448,9 @@ def positions(weights, period, freq=None):
         #
         if curr_time in weights.index:
             assets_weights = weights.loc[curr_time]
-            expire_ts = utils.add_custom_calendar_timedelta(curr_time, period, freq)
+            expire_ts = utils.add_custom_calendar_timedelta(
+                curr_time, period, freq
+            )
             active_weights.append((expire_ts, assets_weights))
 
         #
@@ -449,7 +477,11 @@ def positions(weights, period, freq=None):
 
 
 def mean_return_by_quantile(
-    factor_data, by_date=False, by_group=False, demeaned=True, group_adjust=False
+    factor_data,
+    by_date=False,
+    by_group=False,
+    demeaned=True,
+    group_adjust=False,
 ):
     """
     Computes mean returns for factor quantiles across
@@ -513,7 +545,9 @@ def mean_return_by_quantile(
     return mean_ret, std_error_ret
 
 
-def compute_mean_returns_spread(mean_returns, upper_quant, lower_quant, std_err=None):
+def compute_mean_returns_spread(
+    mean_returns, upper_quant, lower_quant, std_err=None
+):
     """
     Computes the difference between the mean returns of
     two quantiles. Optionally, computes the standard error
@@ -593,7 +627,8 @@ def quantile_turnover(quantile_factor, quantile, period=1):
 
     new_names = (quant_name_sets - name_shifted).dropna()
     quant_turnover = (
-        new_names.apply(lambda x: len(x)) / quant_name_sets.apply(lambda x: len(x))
+        new_names.apply(lambda x: len(x))
+        / quant_name_sets.apply(lambda x: len(x))
     ).rename(quantile)
     return quant_turnover
 
@@ -642,12 +677,20 @@ def factor_rank_autocorrelation(factor_data, period=1):
     asset_shifted = asset_ranks_by_day.shift(period)
 
     return (
-        asset_ranks_by_day.corrwith(asset_shifted, axis=1).rename(period).asfreq(freq)
+        asset_ranks_by_day.corrwith(asset_shifted, axis=1)
+        .rename(period)
+        .asfreq(freq)
     )
 
 
 def common_start_returns(
-    factor, returns, before, after, cumulative=False, mean_by_date=False, demean_by=None
+    factor,
+    returns,
+    before,
+    after,
+    cumulative=False,
+    mean_by_date=False,
+    demean_by=None,
 ):
     """
     A date and equity pair is extracted from each index row in the factor
@@ -707,10 +750,14 @@ def common_start_returns(
 
         equities_slice = set(equities)
         if demean_by is not None:
-            demean_equities = demean_by.loc[timestamp].index.get_level_values("asset")
+            demean_equities = demean_by.loc[timestamp].index.get_level_values(
+                "asset"
+            )
             equities_slice |= set(demean_equities)
 
-        series = returns.loc[returns.index[starting_index:ending_index], equities_slice]
+        series = returns.loc[
+            returns.index[starting_index:ending_index], equities_slice
+        ]
         series.index = range(
             starting_index - day_zero_index, ending_index - day_zero_index
         )
@@ -832,7 +879,9 @@ def average_cumulative_return_by_quantile(
             # Align cumulative return from different dates to the same index
             # then compute mean and std
             #
-            avgcumret = g_fq.groupby(g_fq).apply(average_cumulative_return, demean_by)
+            avgcumret = g_fq.groupby(g_fq).apply(
+                average_cumulative_return, demean_by
+            )
             if len(avgcumret) == 0:
                 continue
 
@@ -937,7 +986,9 @@ def factor_cumulative_returns(
     if groups is not None:
         portfolio_data = portfolio_data[portfolio_data["group"].isin(groups)]
 
-    returns = factor_returns(portfolio_data, long_short, group_neutral, equal_weight)
+    returns = factor_returns(
+        portfolio_data, long_short, group_neutral, equal_weight
+    )
 
     return cumulative_returns(returns[period], period)
 
@@ -1011,7 +1062,9 @@ def factor_positions(
     if groups is not None:
         portfolio_data = portfolio_data[portfolio_data["group"].isin(groups)]
 
-    weights = factor_weights(portfolio_data, long_short, group_neutral, equal_weight)
+    weights = factor_weights(
+        portfolio_data, long_short, group_neutral, equal_weight
+    )
 
     return positions(weights, period)
 
@@ -1122,7 +1175,13 @@ def create_pyfolio_input(
     # returns
     #
     cumrets = factor_cumulative_returns(
-        factor_data, period, long_short, group_neutral, equal_weight, quantiles, groups
+        factor_data,
+        period,
+        long_short,
+        group_neutral,
+        equal_weight,
+        quantiles,
+        groups,
     )
     cumrets = cumrets.resample("1D").last().fillna(method="ffill")
     returns = cumrets.pct_change().fillna(0)
@@ -1133,7 +1192,13 @@ def create_pyfolio_input(
     # recompute the weights so that the sum of daily weights is 1.0
     #
     positions = factor_positions(
-        factor_data, period, long_short, group_neutral, equal_weight, quantiles, groups
+        factor_data,
+        period,
+        long_short,
+        group_neutral,
+        equal_weight,
+        quantiles,
+        groups,
     )
     positions = positions.resample("1D").sum().fillna(method="ffill")
     positions = positions.div(positions.abs().sum(axis=1), axis=0).fillna(0)
@@ -1141,7 +1206,9 @@ def create_pyfolio_input(
 
     # transform percentage positions to dollar positions
     if capital is not None:
-        positions = positions.mul(cumrets.reindex(positions.index) * capital, axis=0)
+        positions = positions.mul(
+            cumrets.reindex(positions.index) * capital, axis=0
+        )
 
     #
     #
@@ -1161,7 +1228,9 @@ def create_pyfolio_input(
             group_neutral=False,
             equal_weight=True,
         )
-        benchmark_rets = benchmark_rets.resample("1D").last().fillna(method="ffill")
+        benchmark_rets = (
+            benchmark_rets.resample("1D").last().fillna(method="ffill")
+        )
         benchmark_rets = benchmark_rets.pct_change().fillna(0)
         benchmark_rets.name = "benchmark"
     else:
