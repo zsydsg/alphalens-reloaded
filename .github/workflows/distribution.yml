@@ -75,5 +75,5 @@ jobs:
 
       - name: Install wheel
         run: |
-          pip install alphalens-reloaded[test]
+          pip install -i https://test.pypi.org/simple/ alphalens-reloaded[test]
           nosetests alphalens.tests
