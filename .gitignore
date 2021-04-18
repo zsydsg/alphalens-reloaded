@@ -26,3 +26,4 @@ dist
 .idea
 .noseids
 update
+.python-version
