@@ -1,6 +1,9 @@
 name: PyPI Wheels
 
-on: workflow_dispatch
+on:
+  push:
+    tags:
+      - '*'
 
 jobs:
   dist:
