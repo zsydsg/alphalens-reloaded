@@ -1,4 +1,4 @@
-name: Alphalens Wheels & Source Distribution
+name: PyPI Wheels
 
 on: workflow_dispatch
 

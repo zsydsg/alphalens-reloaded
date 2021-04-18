@@ -9,7 +9,7 @@ Alphalens
 
 Alphalens is a Python Library for performance analysis of predictive
 (alpha) stock factors. Alphalens works great with the
-`Zipline <https://www.zipline.io/>`__ open source backtesting library, and
+`Zipline <https://www.zipline.ml4trading.io/>`__ open source backtesting library, and
 `Pyfolio <https://github.com/quantopian/pyfolio>`__ which provides
 performance and risk analysis of financial portfolios. You can try Alphalens
 at  `Quantopian <https://www.quantopian.com>`_ -- a free,
