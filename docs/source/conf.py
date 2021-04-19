@@ -72,7 +72,7 @@ html_context = {
     "doc_path": "docs/source",
 }
 
-html_static_path = ["_static"]
+html_static_path = []
 
 htmlhelp_basename = "Alphalensdoc"
 
