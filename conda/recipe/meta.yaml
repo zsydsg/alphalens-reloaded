@@ -1,4 +1,4 @@
-{% set name = "alphalens" %}
+{% set name = "alphalens-reloaded" %}
 {% set version = "0.4.1.post1" %}
 
 package:
