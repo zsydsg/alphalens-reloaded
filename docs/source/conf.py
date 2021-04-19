@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-
+from pathlib import Path
+import pydata_sphinx_theme
 from alphalens import __version__ as version
 
-sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, Path("../..").resolve(strict=True).as_posix())
 
 extensions = ["sphinx.ext.autodoc", "numpydoc"]
 
@@ -27,7 +28,8 @@ pygments_style = "sphinx"
 
 todo_include_todos = False
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "pydata_sphinx_theme"
+html_theme_path = pydata_sphinx_theme.get_html_theme_path()
 
 html_static_path = ["_static"]
 
