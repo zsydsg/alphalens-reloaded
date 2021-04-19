@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import division
+
 from unittest import TestCase
 from parameterized import parameterized
 from numpy import nan

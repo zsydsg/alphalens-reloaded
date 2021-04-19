@@ -13,13 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import division
+import warnings
+
 from unittest import TestCase
 from parameterized import parameterized
 from numpy import nan
 from pandas import DataFrame, date_range, Timedelta, concat
 
-from ..tears import (
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+from ..tears import (  # noqa: E402
     create_returns_tear_sheet,
     create_information_tear_sheet,
     create_turnover_tear_sheet,
@@ -27,9 +31,9 @@ from ..tears import (
     create_full_tear_sheet,
     create_event_returns_tear_sheet,
     create_event_study_tear_sheet,
-)
+)  # noqa: E402
 
-from ..utils import get_clean_factor_and_forward_returns
+from ..utils import get_clean_factor_and_forward_returns  # noqa: E402
 
 
 class TearsTestCase(TestCase):

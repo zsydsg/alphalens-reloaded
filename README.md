@@ -7,7 +7,8 @@
 Alphalens
 =========
 
-[![GitHub Actions status](https://github.com/quantopian/alphalens/workflows/CI/badge.svg)](https://github.com/quantopian/alphalens/actions?query=workflow%3ACI+branch%3Amaster)
+[![CI Tests](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/unit_tests.yml)
+[![PyPI Wheels](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/distribution.yml/badge.svg)](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/distribution.yml)
 
 Alphalens is a Python library for performance analysis of predictive
 (alpha) stock factors. Alphalens works great with the
@@ -26,8 +27,7 @@ statistics and plots about an alpha factor, including:
 Getting started
 ---------------
 
-With a signal and pricing data creating a factor \"tear sheet\" is a two
-step process:
+With a signal and pricing data creating a factor \"tear sheet\" is a two step process:
 
 ```python
 import alphalens
@@ -46,11 +46,8 @@ alphalens.tears.create_full_tear_sheet(factor_data)
 Learn more
 ----------
 
-Check out the [example
-notebooks](https://github.com/quantopian/alphalens/tree/master/alphalens/examples)
-for more on how to read and use the factor tear sheet. A good starting
-point could be
-[this](https://github.com/quantopian/alphalens/tree/master/alphalens/examples/alphalens_tutorial_on_quantopian.ipynb)
+Check out the [example notebooks](https://github.com/stefan-jansen/alphalens-reloaded/tree/master/alphalens/examples)
+for more on how to read and use the factor tear sheet.
 
 Installation
 ------------

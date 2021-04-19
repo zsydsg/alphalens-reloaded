@@ -323,7 +323,7 @@ def factor_alpha_beta(
             utils.get_forward_returns_columns(factor_data.columns)
         ]
         .mean()
-        .loc[returns.index]
+        .reindex(returns.index, axis=0)
     )
 
     if isinstance(returns, pd.Series):
@@ -336,7 +336,7 @@ def factor_alpha_beta(
         y = returns[period].values
         x = add_constant(x)
 
-        reg_fit = OLS(y, x).fit()
+        reg_fit = OLS(y, x, missing="drop").fit()
         try:
             alpha, beta = reg_fit.params
         except ValueError:
@@ -990,7 +990,7 @@ def factor_cumulative_returns(
         portfolio_data, long_short, group_neutral, equal_weight
     )
 
-    return cumulative_returns(returns[period], period)
+    return cumulative_returns(returns[period])
 
 
 def factor_positions(
