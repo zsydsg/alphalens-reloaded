@@ -24,12 +24,24 @@ language = None
 
 exclude_patterns = []
 
+highlight_language = "python"
+
 pygments_style = "sphinx"
 
 todo_include_todos = False
 
 html_theme = "pydata_sphinx_theme"
 html_theme_path = pydata_sphinx_theme.get_html_theme_path()
+
+html_theme_options = {
+    "github_url": "https://github.com/stefan-jansen/alphalens-reloaded",
+    "twitter_url": "https://twitter.com/ml4trading",
+    "external_links": [
+        {"name": "ML for Trading", "url": "https://ml4trading.io"},
+        {"name": "Community", "url": "https://exchange.ml4trading.io"},
+    ],
+    "google_analytics_id": "UA-74956955-3",
+}
 
 html_static_path = ["_static"]
 
