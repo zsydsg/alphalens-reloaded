@@ -50,6 +50,18 @@ html_theme_options = {
     ],
     "google_analytics_id": "UA-74956955-3",
     "use_edit_page_button": True,
+    "favicons": [
+        {
+            "rel": "icon",
+            "sizes": "16x16",
+            "href": "assets/favicon16x16.ico",
+        },
+        {
+            "rel": "icon",
+            "sizes": "32x32",
+            "href": "assets/favicon32x32.ico",
+        },
+    ],
 }
 
 html_context = {
