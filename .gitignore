@@ -29,3 +29,4 @@ update
 .python-version
 .pre-commit-config.yaml
 conda/recipe
+_static
