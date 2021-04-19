@@ -7,11 +7,19 @@ from alphalens import __version__ as version
 
 sys.path.insert(0, Path("../..").resolve(strict=True).as_posix())
 
-extensions = ["sphinx.ext.autodoc", "numpydoc"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "numpydoc",
+    "m2r2",
+    "sphinx_markdown_tables",
+    "nbsphinx",
+    "sphinx.ext.mathjax",
+    "sphinx_copybutton",
+]
 
 templates_path = ["_templates"]
 
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 
 master_doc = "index"
 
@@ -41,6 +49,15 @@ html_theme_options = {
         {"name": "Community", "url": "https://exchange.ml4trading.io"},
     ],
     "google_analytics_id": "UA-74956955-3",
+    "use_edit_page_button": True,
+}
+
+html_context = {
+    "github_url": "https://github.com",
+    "github_user": "stefan-jansen",
+    "github_repo": "alphalens-reloaded",
+    "github_version": "main",
+    "doc_path": "docs/source",
 }
 
 html_static_path = ["_static"]
