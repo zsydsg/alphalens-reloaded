@@ -27,3 +27,5 @@ dist
 .noseids
 update
 .python-version
+.pre-commit-config.yaml
+conda/recipe
