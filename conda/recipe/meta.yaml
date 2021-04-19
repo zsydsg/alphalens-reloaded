@@ -37,5 +37,5 @@ test:
 about:
   home: https://alphalens.ml4trading.io
   summary: 'Performance analysis of predictive (alpha) stock factors'
-  license = Apache 2.0
-  license_file = LICENSE
+  license: Apache 2.0
+  license_file: LICENSE
