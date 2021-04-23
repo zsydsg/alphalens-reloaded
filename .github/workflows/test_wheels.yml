@@ -20,5 +20,5 @@ jobs:
       - name: Install wheel
         run: |
           pip install -U pip wheel
-          pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple your-package alphalens-reloaded[test]
+          pip install -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple alphalens-reloaded[test]
           nosetests alphalens.tests

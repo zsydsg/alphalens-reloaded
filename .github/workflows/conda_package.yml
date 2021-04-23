@@ -15,10 +15,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        #        os: [ macos-latest, windows-latest, ubuntu-latest ]
-        os: [ ubuntu-latest ]
-        #        python: [ '3.7', '3.8' ]
-        python: [ '3.9' ]
+        os: [ macos-latest, windows-latest, ubuntu-latest ]
+        #        os: [ ubuntu-latest ]
+        python: [ '3.7', '3.8' ]
+    #        python: [ '3.9' ]
 
     steps:
       - name: Checkout alphalens-reloaded
@@ -31,7 +31,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python }}
           activate-environment: recipe
-          channels: ml4t, conda-forge, defaults, anaconda
+          channels: ml4t, conda-forge, defaults, anaconda, ranaroussi
 
       - name: conda build for ${{ matrix.os }}
         run: |
