@@ -23,8 +23,7 @@ jobs:
     steps:
       - name: Checkout alphalens
         uses: actions/checkout@v2
-        with:
-          - ref: tags/v0.4.2rc1
+      - run: git checkout tags/v0.4.2rc1
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
