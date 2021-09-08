@@ -7,7 +7,7 @@
 ![PyPI](https://img.shields.io/pypi/v/alphalens-reloaded)
 ![Conda](https://img.shields.io/conda/pn/ml4t/alphalens-reloaded)
 [![Tests](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/unit_tests.yml)
-[![PyPI Wheels](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/distribution.yml/badge.svg)](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/distribution.yml)
+[![PyPI](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/build_wheels.yml/badge.svg)](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/build_wheels.yml)
 [![Alphalens conda distribution](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/conda_package.yml/badge.svg)](https://github.com/stefan-jansen/alphalens-reloaded/actions/workflows/conda_package.yml)
 [![Coverage Status](https://coveralls.io/repos/github/stefan-jansen/alphalens-reloaded/badge.svg?branch=main)](https://coveralls.io/github/stefan-jansen/alphalens-reloaded?branch=main)
 ![GitHub issues](https://img.shields.io/github/issues/stefan-jansen/alphalens-reloaded)

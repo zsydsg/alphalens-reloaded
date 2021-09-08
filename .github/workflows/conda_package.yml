@@ -1,4 +1,4 @@
-name: conda
+name: Anaconda
 
 on: workflow_dispatch
 
