@@ -188,6 +188,13 @@ def plot_information_table(ic_data, return_df=False):
     ic_summary_table["IC Skew"] = stats.skew(ic_data)
     ic_summary_table["IC Kurtosis"] = stats.kurtosis(ic_data)
 
+    # Calculate Rank Information Coefficient (RkIC)
+    rank_ic = ic_data.rank(pct=True)
+    ic_summary_table["RkIC Mean"] = rank_ic.mean()
+    ic_summary_table["RkIC Std."] = rank_ic.std()
+    
+    # Calculate Rank Information Ratio (RkICIR)
+    ic_summary_table["RkICIR"] = rank_ic.mean() / rank_ic.std()
     if return_df:
         return ic_summary_table
     else:
